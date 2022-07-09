@@ -162,8 +162,6 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         ),
       ),
-      //   ),
-      // ),
     );
   }
 
@@ -186,6 +184,12 @@ class _AuthScreenState extends State<AuthScreen> {
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
     );
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future _signUp(
@@ -209,5 +213,11 @@ class _AuthScreenState extends State<AuthScreen> {
       password: _passwordController.text.trim(),
       name: _usernameController.text.trim(),
     );
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }
