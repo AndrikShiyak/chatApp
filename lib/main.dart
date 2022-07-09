@@ -1,4 +1,8 @@
+import 'package:chat_app2/data/api/auth_api.dart';
+import 'package:chat_app2/data/api/user_api.dart';
+import 'package:chat_app2/data/repository/auth_repository.dart';
 import 'package:chat_app2/logic/bloc/loader_bloc.dart';
+import 'package:chat_app2/logic/cubit/auth_cubit.dart';
 import 'package:chat_app2/logic/debug/app_bloc_observer.dart';
 import 'package:chat_app2/router.dart';
 import 'package:chat_app2/utils/utils.dart';
@@ -25,28 +29,48 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-        // MaterialApp(
-        //   title: 'Chat App',
-        //   scaffoldMessengerKey: Utils.messengerKey,
-        //   theme: ThemeData(
-        //     primarySwatch: Colors.pink,
-        //   ),
-        //   home: Scaffold(),
-        // );
+    return MultiRepositoryProvider(
+      providers: [
+        // API's
 
-        BlocProvider(
-      create: (context) => LoaderBloc(),
-      child: ScreenUtilInit(
-        designSize: const Size(375, 667),
-        builder: (context, _) => SafeArea(
-          child: MaterialApp(
-            title: 'Chat App',
-            scaffoldMessengerKey: Utils.messengerKey,
-            theme: ThemeData(
-              primarySwatch: Colors.pink,
+        RepositoryProvider(
+          create: (context) => AuthApi(),
+        ),
+        RepositoryProvider(
+          create: (context) => UserApi(),
+        ),
+
+        // Repositories
+
+        RepositoryProvider(
+          create: (context) => AuthRepository(
+            authApi: context.read<AuthApi>(),
+            userApi: context.read<UserApi>(),
+          ),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => LoaderBloc(),
+          ),
+          BlocProvider(
+            create: (context) => AuthCubit(
+              context.read<AuthRepository>(),
             ),
-            onGenerateRoute: AppRouter.onGenerateRoute,
+          ),
+        ],
+        child: ScreenUtilInit(
+          designSize: const Size(375, 667),
+          builder: (context, _) => SafeArea(
+            child: MaterialApp(
+              title: 'Chat App',
+              scaffoldMessengerKey: Utils.messengerKey,
+              theme: ThemeData(
+                primarySwatch: Colors.pink,
+              ),
+              onGenerateRoute: AppRouter.onGenerateRoute,
+            ),
           ),
         ),
       ),

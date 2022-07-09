@@ -1,10 +1,9 @@
+import 'package:chat_app2/logic/cubit/auth_cubit.dart';
 import 'package:chat_app2/router.dart';
-import 'package:chat_app2/screens/main_page_layout.dart';
-import 'package:chat_app2/utils/utils.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chat_app2/ui/screens/main_page_layout.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -36,6 +35,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return MainPageLayout(
+      enableLoader: false,
       backgroundColor: Theme.of(context).primaryColor,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -129,13 +129,12 @@ class _AuthScreenState extends State<AuthScreen> {
                     else
                       ElevatedButton(
                         onPressed: _isLogin
-                            ? () => _login(
-                                  context,
-                                  email: _emailController.text.trim(),
-                                  password: _passwordController.text.trim(),
+                            ? () => _signIn(
+                                  context.read<AuthCubit>().signIn,
                                 )
-                            : () => _signUp(_emailController.text.trim(),
-                                _passwordController.text.trim()),
+                            : () => _signUp(
+                                  context.read<AuthCubit>().signUp,
+                                ),
                         child: Text(_isLogin ? 'Login' : 'Sign Up'),
                       ),
                     SizedBox(height: 10.h),
@@ -163,15 +162,19 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         ),
       ),
+      //   ),
+      // ),
     );
   }
 
-  Future _login(
-    BuildContext context, {
-    required String email,
-    required String password,
-  }) async {
-    final isValid = _formKey.currentState!.validate();
+  Future _signIn(
+    Future<void> Function({
+      required String email,
+      required String password,
+    })
+        signIn,
+  ) async {
+    final bool isValid = _formKey.currentState!.validate();
 
     if (!isValid) return;
 
@@ -179,22 +182,21 @@ class _AuthScreenState extends State<AuthScreen> {
       _isLoading = true;
     });
 
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } on FirebaseAuthException catch (e) {
-      Utils.showSnackbar(e.message);
-    }
-
-    setState(() {
-      _isLoading = false;
-    });
+    await signIn(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
   }
 
-  Future _signUp(String email, String password) async {
-    final isValid = _formKey.currentState!.validate();
+  Future _signUp(
+    Future<void> Function({
+      required String email,
+      required String password,
+      required String name,
+    })
+        signUp,
+  ) async {
+    final bool isValid = _formKey.currentState!.validate();
 
     if (!isValid) return;
 
@@ -202,32 +204,10 @@ class _AuthScreenState extends State<AuthScreen> {
       _isLoading = true;
     });
 
-    try {
-      final credencials =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      await FirebaseAuth.instance.currentUser
-          ?.updateDisplayName(_usernameController.text.trim());
-
-      final docUser = FirebaseFirestore.instance
-          .collection('users')
-          .doc(credencials.user!.uid);
-
-      await docUser.set({
-        // 'name': credencials.user!.displayName,
-        'name': _usernameController.text.trim(),
-        'email': credencials.user!.email,
-        'password': password,
-      });
-    } on FirebaseAuthException catch (e) {
-      Utils.showSnackbar(e.message);
-    }
-
-    setState(() {
-      _isLoading = false;
-    });
+    await signUp(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+      name: _usernameController.text.trim(),
+    );
   }
 }

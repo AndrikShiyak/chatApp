@@ -1,8 +1,10 @@
-import 'package:chat_app2/screens/main_page_layout.dart';
+import 'package:chat_app2/logic/cubit/auth_cubit.dart';
+import 'package:chat_app2/ui/screens/main_page_layout.dart';
+import 'package:chat_app2/ui/widgets/main_appbar.dart';
 import 'package:chat_app2/utils/pop_ups.dart';
-import 'package:chat_app2/widgets/main_appbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -39,11 +41,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(width: 30.w),
                 Expanded(
-                  child: Text(
-                    // userName,
-                    'Username',
-                    style: Theme.of(context).textTheme.headline6,
-                    overflow: TextOverflow.ellipsis,
+                  child: BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, state) {
+                      return Text(
+                        state.user?.name ?? 'Username',
+                        style: Theme.of(context).textTheme.headline6,
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    },
                   ),
                 ),
               ],

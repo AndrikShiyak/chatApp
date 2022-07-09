@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:chat_app2/screens/chat_screen.dart';
-import 'package:chat_app2/screens/main_page_layout.dart';
+import 'package:chat_app2/ui/screens/chat_screen.dart';
+import 'package:chat_app2/ui/screens/main_page_layout.dart';
 import 'package:chat_app2/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +63,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
     if (_isVerified) {
       _timer?.cancel();
     }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override

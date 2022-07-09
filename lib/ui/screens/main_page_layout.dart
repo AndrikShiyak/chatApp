@@ -1,4 +1,4 @@
-import 'package:chat_app2/widgets/loader.dart';
+import 'package:chat_app2/ui/widgets/loader.dart';
 import 'package:flutter/material.dart';
 
 class MainPageLayout extends StatelessWidget {
@@ -7,11 +7,13 @@ class MainPageLayout extends StatelessWidget {
     this.backgroundColor,
     this.appBar,
     required this.child,
+    this.enableLoader = true,
   }) : super(key: key);
 
   final Widget child;
   final Color? backgroundColor;
   final PreferredSizeWidget? appBar;
+  final bool enableLoader;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class MainPageLayout extends StatelessWidget {
           appBar: appBar,
           body: child,
         ),
-        const LoaderWidget(),
+        if (enableLoader) const LoaderWidget(),
       ],
     );
   }

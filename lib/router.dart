@@ -1,9 +1,9 @@
 import 'package:chat_app2/exceptions/route_exception.dart';
-import 'package:chat_app2/screens/auth_screen.dart';
-import 'package:chat_app2/screens/chat_screen.dart';
-import 'package:chat_app2/screens/reset_password_screen.dart';
-import 'package:chat_app2/screens/main_screen.dart';
-import 'package:chat_app2/screens/profile_screen.dart';
+import 'package:chat_app2/ui/screens/auth_screen.dart';
+import 'package:chat_app2/ui/screens/chat_screen.dart';
+import 'package:chat_app2/ui/screens/main_screen.dart';
+import 'package:chat_app2/ui/screens/profile_screen.dart';
+import 'package:chat_app2/ui/screens/reset_password_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppRouter {

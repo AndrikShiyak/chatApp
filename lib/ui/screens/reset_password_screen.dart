@@ -1,7 +1,7 @@
 import 'package:chat_app2/logic/bloc/loader_bloc.dart';
-import 'package:chat_app2/screens/main_page_layout.dart';
+import 'package:chat_app2/ui/screens/main_page_layout.dart';
+import 'package:chat_app2/ui/widgets/main_appbar.dart';
 import 'package:chat_app2/utils/utils.dart';
-import 'package:chat_app2/widgets/main_appbar.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
