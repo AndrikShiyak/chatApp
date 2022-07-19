@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class UserApi {
   UserApi._();
@@ -16,6 +19,7 @@ class UserApi {
     final docUser = FirebaseFirestore.instance.collection('users').doc(uid);
 
     await docUser.set({
+      'id': uid,
       'name': name,
       'email': email,
       'password': password,
@@ -28,5 +32,24 @@ class UserApi {
     final userSnapshot = await docUser.get();
 
     return userSnapshot.data();
+  }
+
+  Future<void> updateUserImage({
+    required String uid,
+    required File image,
+  }) async {
+    final String path = 'users_images/$uid.jpg';
+
+    final ref = FirebaseStorage.instance.ref().child(path);
+
+    final uploadTask = ref.putFile(image);
+
+    final snapshot = await uploadTask.whenComplete(() {});
+
+    final url = await snapshot.ref.getDownloadURL();
+
+    final docUser = FirebaseFirestore.instance.collection('users').doc(uid);
+
+    await docUser.update({'imageUrl': url});
   }
 }

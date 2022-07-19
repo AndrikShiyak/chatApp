@@ -16,7 +16,7 @@ class MainScreen extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasData) {
-          return const VerificationScreen();
+          return const VerificationContainer();
         } else {
           return const AuthScreen();
         }

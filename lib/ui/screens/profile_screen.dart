@@ -1,4 +1,6 @@
-import 'package:chat_app2/logic/cubit/auth_cubit.dart';
+import 'dart:io';
+
+import 'package:chat_app2/logic/cubit/user_cubit.dart';
 import 'package:chat_app2/ui/screens/main_page_layout.dart';
 import 'package:chat_app2/ui/widgets/main_appbar.dart';
 import 'package:chat_app2/utils/pop_ups.dart';
@@ -19,11 +21,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final String userName =
-    //     FirebaseAuth.instance.currentUser?.displayName ?? '';
-
-    // final String? imageUrl = FirebaseAuth.instance.currentUser?.photoURL;
-
     return MainPageLayout(
       appBar: const MainAppBar(title: 'Profile'),
       child: Padding(
@@ -33,15 +30,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  radius: 70.w,
-                  // backgroundImage:
-                  // imageUrl != null ? NetworkImage(imageUrl) : null,
-                  // child: _image != null ? Image.file(_image!) : null,
+                BlocBuilder<UserCubit, UserState>(
+                  builder: (context, state) {
+                    final String? imageUrl = state.user?.imageUrl;
+
+                    return CircleAvatar(
+                      radius: 70.w,
+                      backgroundImage:
+                          imageUrl != null ? NetworkImage(imageUrl) : null,
+                    );
+                  },
                 ),
                 SizedBox(width: 30.w),
                 Expanded(
-                  child: BlocBuilder<AuthCubit, AuthState>(
+                  child: BlocBuilder<UserCubit, UserState>(
                     builder: (context, state) {
                       return Text(
                         state.user?.name ?? 'Username',
@@ -57,9 +59,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Center(
               child: TextButton(
                 onPressed: () async {
-                  // TODO Upload image to Firebase storage
+                  final updateUserImage =
+                      context.read<UserCubit>().updateUserImage;
 
-                  final image = await PopUps.showCameraGalleryPopup(context);
+                  final File? image =
+                      await PopUps.showCameraGalleryPopup(context);
+
+                  if (image == null) return;
+
+                  updateUserImage(
+                    image: image,
+                  );
                 },
                 child: const Text('Change Avatar'),
               ),

@@ -1,8 +1,10 @@
 import 'package:chat_app2/data/api/auth_api.dart';
 import 'package:chat_app2/data/api/user_api.dart';
 import 'package:chat_app2/data/repository/auth_repository.dart';
+import 'package:chat_app2/data/repository/user_repository.dart';
 import 'package:chat_app2/logic/bloc/loader_bloc.dart';
 import 'package:chat_app2/logic/cubit/auth_cubit.dart';
+import 'package:chat_app2/logic/cubit/user_cubit.dart';
 import 'package:chat_app2/logic/debug/app_bloc_observer.dart';
 import 'package:chat_app2/router.dart';
 import 'package:chat_app2/utils/utils.dart';
@@ -43,9 +45,16 @@ class MyApp extends StatelessWidget {
         // Repositories
 
         RepositoryProvider(
+          create: (context) => UserRepository(
+            userApi: context.read<UserApi>(),
+            authApi: context.read<AuthApi>(),
+          ),
+        ),
+        RepositoryProvider(
           create: (context) => AuthRepository(
             authApi: context.read<AuthApi>(),
             userApi: context.read<UserApi>(),
+            userRepository: context.read<UserRepository>(),
           ),
         ),
       ],
@@ -55,8 +64,15 @@ class MyApp extends StatelessWidget {
             create: (context) => LoaderBloc(),
           ),
           BlocProvider(
+            create: (context) => UserCubit(
+              userRepository: context.read<UserRepository>(),
+              loaderBloc: context.read<LoaderBloc>(),
+            ),
+          ),
+          BlocProvider(
             create: (context) => AuthCubit(
-              context.read<AuthRepository>(),
+              authRepository: context.read<AuthRepository>(),
+              userCubit: context.read<UserCubit>(),
             ),
           ),
         ],

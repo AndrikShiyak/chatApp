@@ -25,12 +25,17 @@ class AuthApi {
     required String email,
     required String password,
   }) async {
-    // try {
     final credencials = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
 
     return credencials.user?.uid;
+  }
+
+  Future<String?> getUserId() async {
+    final String? uid = FirebaseAuth.instance.currentUser?.uid;
+
+    return uid;
   }
 }

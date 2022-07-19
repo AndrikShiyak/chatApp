@@ -1,15 +1,20 @@
 import 'package:chat_app2/data/models/user_model.dart';
 import 'package:chat_app2/data/repository/auth_repository.dart';
+import 'package:chat_app2/logic/cubit/user_cubit.dart';
 import 'package:chat_app2/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'auth_state.dart';
 
-class AuthCubit extends Cubit<AuthState> {
-  AuthCubit(this.repository) : super(AuthState());
+class AuthCubit extends Cubit<void> {
+  AuthCubit({
+    required this.authRepository,
+    required this.userCubit,
+  }) : super(AuthState());
 
-  final AuthRepository repository;
+  final AuthRepository authRepository;
+  final UserCubit userCubit;
 
   Future<void> signUp({
     required String email,
@@ -17,10 +22,10 @@ class AuthCubit extends Cubit<AuthState> {
     required String name,
   }) async {
     try {
-      final UserModel? user =
-          await repository.signUp(email: email, password: password, name: name);
+      final UserModel? user = await authRepository.signUp(
+          email: email, password: password, name: name);
 
-      emit(state.copyWith(user: user));
+      userCubit.emit(userCubit.state.copyWith(user: user));
     } on FirebaseAuthException catch (e) {
       Utils.showSnackbar(e.message);
     } catch (e) {
@@ -34,9 +39,9 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     try {
       final UserModel? user =
-          await repository.signIn(email: email, password: password);
+          await authRepository.signIn(email: email, password: password);
 
-      emit(state.copyWith(user: user));
+      userCubit.emit(userCubit.state.copyWith(user: user));
     } on FirebaseAuthException catch (e) {
       Utils.showSnackbar(e.message);
     } catch (e) {
