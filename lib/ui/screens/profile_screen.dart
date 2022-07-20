@@ -17,7 +17,17 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // File? _image;
+  void _updateUserImage() async {
+    final updateUserImage = context.read<UserCubit>().updateUserImage;
+
+    final File? image = await PopUps.showCameraGalleryPopup(context);
+
+    if (image == null) return;
+
+    updateUserImage(
+      image: image,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,19 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: 20.h),
             Center(
               child: TextButton(
-                onPressed: () async {
-                  final updateUserImage =
-                      context.read<UserCubit>().updateUserImage;
-
-                  final File? image =
-                      await PopUps.showCameraGalleryPopup(context);
-
-                  if (image == null) return;
-
-                  updateUserImage(
-                    image: image,
-                  );
-                },
+                onPressed: _updateUserImage,
                 child: const Text('Change Avatar'),
               ),
             ),

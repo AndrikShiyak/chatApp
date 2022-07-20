@@ -1,6 +1,8 @@
 import 'package:chat_app2/router.dart';
 import 'package:chat_app2/ui/screens/main_page_layout.dart';
+import 'package:chat_app2/ui/widgets/chat/new_message.dart';
 import 'package:chat_app2/ui/widgets/main_appbar.dart';
+import 'package:chat_app2/ui/widgets/chat/messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -20,8 +22,16 @@ class ChatScreen extends StatelessWidget {
           SizedBox(width: 10.w),
         ],
       ),
-      child: const Center(
-        child: Text('Chat'),
+      child: Column(
+        children: const [
+          Expanded(
+            child: Messages(),
+          ),
+          Padding(
+            padding: EdgeInsets.all(20.0),
+            child: NewMessage(),
+          ),
+        ],
       ),
     );
   }
